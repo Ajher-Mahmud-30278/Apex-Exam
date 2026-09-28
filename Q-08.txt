@@ -1,0 +1,7 @@
+(a)
+
+The Named Credential allows us to access and fetch data using External API/URLs. Here's how we can configure that. 
+
+Before setting up a named credential, we have to create an External Credential with an API and its secret credential first. Then we can select it from the named credential. 
+
+Now that we have got our named credential, we have to go to the Permission Set from Setup and grant the users we want (For example, System Administrator) permission. We can then call the API using an Apex class and see if the configuration works or not with the returned HTTP code. 

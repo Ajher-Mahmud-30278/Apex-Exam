@@ -1,0 +1,55 @@
+(a)
+
+Record-Level access is the rule that dictates whether a user or a user group can see a records of an object or multiple objects. 
+
+The Object/Field-Level access dictates whether a user or a user group can access certain objects or certain fields of a particular object. 
+
+In this context, 
+
+Record-Level access grants the developer to access the Customer Assessment Records. He can also read the two custom fields Risk_Score_c and Internal_Comment_c because he has FLS access. 
+
+
+(b)
+
+Whenever declaring a class, we have to use "With Sharing" as it respects Salesforce's org level and object-level security. 
+
+Here's a demo:
+
+public with sharing class AccountPuller {
+    
+}
+
+.
+
+As for record-level access, we can use Permission Set and Permission Set Group to ensure who gets the access to the records and who does not. 
+
+
+(c) For CRUD operations and running SOQL Queries, it is important to use "WITH USER_MODE" always after the WHERE clause. 
+
+This adheres to Salesforce's field-level security when queriying, and ensures that no private fields have been accessed, or modified.
+
+Here's the appropriate security mechanism in modern Apex, 
+
+Set<Account> acc = [SELECT Id, Name FROM Account WHERE Name = 'Ashen' WITH USER_MODE];
+        Set<Account> newIds = new Set<Account>();
+        for (Account a : acc){
+                a.add = newIDs;
+        }
+        update newIds;
+
+
+(d) The fact that the users that are not intened to access those records and fields creates a number of security risk. 
+
+For example, if a user applies for a job and includes his information, the Salesforce security should hide the sensitive informations such a Social Security Number, Address from unintended users/profiles. For example, a Hiring Manager, HR, or even a developer should not have access to that field at all. At the same time, some users who have no business with the hiring pipeline should not even be able to see the records of the applicants. 
+
+The securtiy risks of the given scenrio is that unintended access might pose a risk of data leak, privacy concern etc. The data might contain sensitive information. Moreover, running Apex and DML without respecting FLS might accidentally modify the data. 
+
+Here's how I would redesign the service security.
+
+1. Making sure that the records are only accessed by those who are intened. This can be achieved using Sharing Rules, Permission Set and Permission Set groups. 
+
+2. Making sure that all the Apex classes respects org-wide security. 
+
+3. Any SOQL Query and DML operations should use "WITH USER_MODE" to respect FLS.
+
+This is how the system can prevent unwanted access. 

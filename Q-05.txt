@@ -1,0 +1,26 @@
+(a)
+
+The current error hand does not use Database methods. So, it will throw error even if only one record insertion fails. 
+
+Moreover, the error message does not show detailed error log. That leaves the developer wondering what might have gone wrong. 
+
+(b)
+
+try {
+        Database.insert leadsToInsert;
+            } catch (DatabseException e) {
+            System.debug('Show Error Message' + DatabaseException.e());
+        }
+
+(c) Here's how we can structure meaningul exception handling and where each blocks fit, 
+
+Try: We will write the main logic within this block. 
+
+Catch: This block will be used to identify and process the error. 
+
+Finally: This block will execute regardless and should contain meaningful message upon a successful operation or an error. 
+
+
+(d)
+
+Each errors are different and also caused are different. The relevant Error messages (such as NullError, Database Error) should be returned so that the debugging can be easier.

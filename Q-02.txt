@@ -1,0 +1,71 @@
+(a)
+
+Here the technical problems of the implementation, 
+
+1. It Queries inside a loop.
+
+2. It does not respect FLS access when queriying.
+
+3. It does not use a List/Set inside the for loop to store multiple records.
+
+4. It does not use Databse methods. 
+
+
+(b)
+
+Here's how the problems can affect affect Salesforce governor limits, data processing, or transaction
+behavior during bulk operations,
+
+1. Governor Limits:
+
+Queriying inside a loop might exceed Salesforce's governor limits when running operations with multiple records.
+
+2. Data Processing:
+
+Queriying inside a loop means the governor limit will exceed at some point if we are working with a lot of records. The Data Processing will stop midway.
+
+And since it does not use a List/Set inside the for loop, it can not store multiple data. It can only store one record at a time.
+
+3. Transaction Behavior:
+
+As no Database Method was used during DML operations, this code will not work if one operation fails during the execution and the entire transaction will fail. 
+
+
+(c)
+
+Here's the rewritten implementation to process multiple Opportunities and Accounts safely in one transaction,
+
+trigger OpportunityTrigger on Opportunity (after insert, after update) {
+    List<Opportunity> acct = [SELECT Account.Id, Amount, Strategic__c 
+    FROM Opportunity
+    WITH USER_MODE
+    ];
+
+    for (Opportunity opp : Trigger.new) {
+    List<Opportunity> opportunities = new List<Database.Opportunity>();
+    opp.add(Opportunites);
+}
+
+
+Decimal totalAmount = 0;
+        for (Opportunity item : opportunities) {
+            if (item.Amount != null) {
+                totalAmount += item.Amount;
+            }
+}
+
+            if (totalAmount >= 5000000) {
+                acc.Strategic__c = true;
+                Databse.update acc;
+            }
+}
+
+(d) Here we can see that the business logic is written inside a trigger instead of a standard Apex Class. This is not the best practice. 
+
+Here's how I would organize the classes and the tirgggers, 
+
+1. The core business logics, SOQL Queries, DML and Database operations will be kept inside the standard Apex Class.
+
+2. A separate Trigger Class will be written that extents the standard class with all the business logics. 
+
+3. The trigger will be conditioned to fire once it meets certain requirements during the execution. 

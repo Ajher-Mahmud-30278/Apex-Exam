@@ -1,0 +1,51 @@
+(a)
+
+public with sharing class AccountRetriever {
+    public static List<Account> AccountRetriever(List<Account> acc) {
+        List<Account> acc = new List<Account>();
+        
+        acc = [SELECT Id, Name, (SELECT Name, Email, Phone FROM Contact), (SELECT Id, Name, StageName, Amount, CloseDate FROM Opportunity) FROM Account];
+
+    }
+}
+
+(b)
+
+
+The Query mechanism will be SOSL which allows us to search something throughout the entire org. This is suitable because the scenario requires us to search across multiple objects. 
+
+(Sorry, I forgot the syntaxt but have the concept)
+
+(c)
+
+For Record Level access: 
+
+We have to use "With Sharing" Key-word as a general rule of thumb or best practice. However, this alone won't be able to cut it. For ensuring Record-Level acess to appropriate users, the system should be designed around Permission Sets or Permission Sets Group to ensure that only the people who are intended to access the records see it.
+
+For Field-Level Security or FLS: 
+
+We have to use "WITH USER_MODE" keyword whenever we run any SOQL query to ensure that the the system is configured around FLS. The method will respect the security whenever a method executes.
+
+
+(d)
+
+The best practice is to never run query inside a loop. So, how can we receive and store multiple account IDs? 
+
+This is where Apex Data Structures comes in handy. We can use List, Sets, or Maps to store multiple IDs at once. Sets are especially effective as it does not store duplicate data. 
+
+We could declare a List/Set and then run query to fetch data from the org. Then run a loop and store the data in a new List/Set.
+
+Here's a demo code, 
+
+public with sharing class AccountRetriever {
+    public static List<Account> AccountRetriever(List<Account> acc) {
+        List<Account> acc = [SELECT Id, Name FROM Account];
+        Set<Account> newIds = new Set<Account>();
+        for (Account a : acc){
+                a.add = newIDs;
+        }
+
+        System.debug('The List Contains the New IDs');
+
+    }
+}
